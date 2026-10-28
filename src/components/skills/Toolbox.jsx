@@ -33,17 +33,20 @@ export function Toolbox({ number = '05' }) {
     panels.forEach((p, i) => {
       const nx = panels[i + 1];
       if (!nx) return;
-      const shade = p.querySelector('.pn-shade');
       const scrollTrigger = {
         trigger: nx,
         start: 'top 90%',
         end: `top ${5 * 16 + (i + 1) * 18}px`,
-        scrub: true
+        scrub: true,
+        // Refresh after upstream pinned sections have added their scroll distance.
+        refreshPriority: -1,
+        invalidateOnRefresh: true
       };
 
+      const shade = p.querySelector('.pn-shade');
       gsap.timeline({ scrollTrigger })
-        .to(p, { scale: 0.88, ease: 'none' }, 0)
-        .to(shade, { opacity: 1, ease: 'none' }, 0);
+        .fromTo(p, { scale: 1, opacity: 1 }, { scale: 0.88, opacity: 0.88, ease: 'none' }, 0)
+        .fromTo(shade, { opacity: 0 }, { opacity: 1, ease: 'none' }, 0);
     });
   }, { scope: toolboxRef });
 
@@ -165,7 +168,6 @@ export function Toolbox({ number = '05' }) {
             <i className="absolute -top-px -left-px w-2.5 h-2.5 border-t border-l border-cyan" />
             <i className="absolute -bottom-px -right-px w-2.5 h-2.5 border-b border-r border-cyan" />
             <i className="pn-shade absolute inset-0 z-10 rounded-lg bg-black opacity-0 pointer-events-none" aria-hidden="true" />
-
             <div className="lg:col-span-5 flex flex-col">
               <span className="mono text-cyan">{g.n}.</span>
               <h3 className="h2 text-[clamp(48px,6.4vw,104px)] mt-4">{g.t}</h3>
